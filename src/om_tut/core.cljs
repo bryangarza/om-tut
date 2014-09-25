@@ -1,5 +1,5 @@
 (ns om-tut.core
-  (:require macros [cljs.core.async.macros :refer [go]])
+  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljs.core.async :refer [put! chan <!]]))
@@ -31,7 +31,7 @@
     (render-state [this {:keys [delete]}]
       (dom/li nil
         (dom/span nil (display-name contact))
-        (dom/button #js {:onClick(fn [e] (put! delete contact))} "Delete")))))
+        (dom/button #js {:onClick (fn [e] (put! delete @contact))} "Delete")))))
 
 (defn contacts-view [app owner]
   (reify
@@ -44,8 +44,8 @@
         (go (loop []
               (let [contact (<! delete)]
                 (om/transact! app :contacts
-                              (fn [xs] (vec (remove #(= contact %) xs))))
-                (recur))))))
+                  (fn [xs] (vec (remove #(= contact %) xs))))
+                  (recur))))))
     om/IRenderState
     (render-state [this {:keys [delete]}]
       (dom/div nil
