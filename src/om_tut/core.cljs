@@ -59,7 +59,7 @@
        (mapv (fn [x]
                (if (:classes x)
                  (update-in x [:classes]
-                            ("tomates"))
+                            (fn [cs] (mapv (:classes app) cs)))
                  x)))))
 
 (defn registry-view [app owner]
@@ -71,5 +71,16 @@
                (apply dom/ul nil
                       (om/build-all entry-view (people app)))))))
 
+(defn classes-view [app owner]
+  (reify
+    om/IRender
+    (render [_]
+      (dom/div #js {:id "classes"}
+               (dom/h2 nil "Classes")
+               (apply dom/ul nil
+                      (map #(dom/li nil %) (vals (:classes app))))))))
+
 (om/root registry-view app-state
          {:target (. js/document (getElementById "registry"))})
+(om/root classes-view app-state
+         {:target (. js/document (getElementById "classes"))})
